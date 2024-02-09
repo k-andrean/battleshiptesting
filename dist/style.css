@@ -1,0 +1,44 @@
+*{
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+
+    row-gap: 1rem;
+}
+
+.game-container {
+    width: 80%;
+    height: 80%;
+
+    margin-top: 1rem;
+
+    margin-bottom: 1rem;
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+.player1-container{
+    margin-bottom: 2rem;
+}
+
+button {
+    width: 100px;
+    height: 40px;
+
+    margin-left: 1rem;
+
+    border: 2px solid black;
+    font-size: 12px;
+
+    
+}
