@@ -96,16 +96,16 @@ function clearShipCoordinates(board, shipCoordinates) {
 }
 
 function receiveAttack(coordinate, gameBoard) {
+  const hitText = document.querySelector('.hit-text');
   const [attackRow, attackCol] = coordinate;
-  // Check if the attack has already been successfully made at these coordinates
   const successfulAttacks = gameBoard.getSuccessfulAttacks();
-  console.log(successfulAttacks);
+
   if (successfulAttacks.some(([row, col]) => row === attackRow && col === attackCol)) {
-    console.log('This target has already been successfully attacked.');
+    hitText.textContent = 'This target has already been successfully attacked.';
     return;
   }
+
   const shipAttackedName = checkShipAttackLocation(coordinate, gameBoard);
-  console.log(shipAttackedName);
 
   if (shipAttackedName) {
     const ships = gameBoard.getShips();
@@ -113,20 +113,20 @@ function receiveAttack(coordinate, gameBoard) {
 
     if (!shipAttacked.isSunk()) {
       shipAttacked.isHit();
-
-      // Add the coordinates to the successful attacks array
       successfulAttacks.push([attackRow, attackCol]);
 
+      const remainingHealth = shipAttacked.length - shipAttacked.getHitCount();
+
       if (shipAttacked.isSunk()) {
-        console.log(`${shipAttackedName} is sunk!`);
+        hitText.textContent = `${shipAttackedName} is sunk!`;
         // Handle any actions when a ship is sunk
       } else {
-        console.log(`${shipAttackedName} is hit!`);
+        hitText.textContent = `${shipAttackedName} is hit! Remaining health: ${remainingHealth}`;
         // Handle any actions when a ship is hit but not sunk
       }
     }
   } else {
-    console.log('Missed the target!');
+    hitText.textContent = 'Missed the target!';
     const missedAttacks = gameBoard.getMissedAttacks();
     missedAttacks.push(coordinate);
     // Handle any actions when the attack misses all ships

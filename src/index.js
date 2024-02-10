@@ -6,6 +6,7 @@ const playButton = document.querySelector('.start');
 const createButton = document.querySelector('.create-board');
 const player1container = document.querySelector('.player1-container');
 const player2container = document.querySelector('.player2-container');
+const playerTurnText = document.querySelector('.player-turn');
 const boardSize = 10;
 
 let game;
@@ -32,15 +33,13 @@ function waitForPlayerInput(currentPlayer) {
 
     const checkForAttack = async () => {
       const playerAttack = currentPlayerBoard.getPlayerAttack();
-      console.log(playerAttack);
 
       if (!playerAttack || Object.keys(playerAttack).length === 0) {
-        console.log(`Player ${currentPlayer.getName()}, please click on a grid/tile/coordinate.`);
+        playerTurnText.textContent = `Player ${currentPlayer.getName()}, please click on a grid/tile/coordinate.`;
         await new Promise((innerResolve) => setTimeout(innerResolve, 6000));
         await checkForAttack(); // Check again after the timeout
       } else {
-        const coordinate = playerAttack.attack; // Get the coordinate value
-        console.log(coordinate);
+        const coordinate = playerAttack.attack;
         resolve(coordinate);
       }
     };
@@ -53,7 +52,6 @@ async function initializeGame() {
   const player1 = game.getPlayerOne();
   const player2 = game.getPlayerTwo();
   const player1Board = game.getPlayerOneBoard();
-  console.log(player1Board.getShipLocation());
   const player2Board = game.getPlayerTwoBoard();
 
   let winner = null;
@@ -107,11 +105,18 @@ function isValidName(name) {
 const logWinner = (winner) => {
   const winnerText = document.querySelector('.winner-text');
   const totalText = document.querySelector('.total-text');
-  const winCount = gameSetup.getWinCount();
+  const hitText = document.querySelector('.hit-text');
+  const winCount = game.getWinCount();
 
   winnerText.textContent = `Winner: ${winner.getName()}`;
   totalText.textContent = `Total Wins - Player1: ${winCount.player1}, Player2: ${winCount.player2}`;
 
-  gameSetup.incrementWinCount(winner);
-  gameSetup.resetBoard();
+  // Reset hit-text content
+  hitText.textContent = '';
+
+  // Remove 'clicked' class from all columns
+  const allCols = document.querySelectorAll('.col');
+  allCols.forEach((col) => col.classList.remove('clicked'));
+
+  game.resetBoard();
 };

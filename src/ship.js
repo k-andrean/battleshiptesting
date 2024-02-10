@@ -1,5 +1,5 @@
 function createShip(name) {
-  const shiplength = {
+  const shipLengths = {
     destroyer: 2,
     cruiser: 3,
     submarine: 3,
@@ -7,7 +7,7 @@ function createShip(name) {
     carrier: 5,
   };
 
-  const length = shiplength[name];
+  const length = shipLengths[name];
 
   if (!length) {
     return null; // or throw new Error('Invalid ship name. Must be one of: destroyer, cruiser, submarine, battleship, carrier.');
@@ -26,6 +26,9 @@ function createShip(name) {
     },
     isSunk() {
       return this.hit === this.length;
+    },
+    getHitCount() {
+      return this.hit;
     },
   };
 }

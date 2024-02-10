@@ -18,16 +18,20 @@ function addRowSquareDiv(container, boardSize, playerId, game) {
     for (let j = 1; j <= boardSize; j++) {
       const col = document.createElement('div');
       col.classList.add(`col-${rowLetter}-${j}`);
+      col.classList.add('hover'); // Add hover class for initial hover effect
       col.setAttribute('data-player-id', playerId); // Associate the column with the player
 
-      col.style.cssText = 'width: 80px; height: 80px; border: 4px solid #8b8589; font-size: 3rem; display: flex; justify-content: center; align-items: center;';
+      col.style.cssText = 'width: 40px; height: 40px; border: 4px solid #8b8589;';
 
       col.addEventListener('click', (event) => {
         const clickedRowLetter = rowLetter;
         const clickedColNumber = String(j);
 
-        clickedCoordinates = [];
+        // Remove hover class and add clicked class to the clicked column
+        col.classList.remove('hover');
+        col.classList.add('clicked');
 
+        clickedCoordinates = [];
         clickedCoordinates.push(clickedRowLetter);
         clickedCoordinates.push(clickedColNumber);
         const currentPlayer = col.getAttribute('data-player-id');
