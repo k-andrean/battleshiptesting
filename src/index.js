@@ -1,17 +1,36 @@
 const createGame = require('./game.js');
 const drawBoard = require('./boardDisplay.js');
-const { receiveAttack } = require('./board.js');
+const {
+  addShipButtonEventListener,
+  showShipButtons,
+  getPlayerName,
+  boardSize,
+  timeoutDuration,
+  receiveAttack,
+} = require('./helper.js');
 
 const playButton = document.querySelector('.start');
 const createButton = document.querySelector('.create-board');
 const player1container = document.querySelector('.player1-container');
 const player2container = document.querySelector('.player2-container');
 const playerTurnText = document.querySelector('.player-turn');
-const boardSize = 10;
+const placeShipButton = document.querySelector('.place-ship');
+const cruiserButtons = document.querySelectorAll('.cruiser');
+const carrierButtons = document.querySelectorAll('.carrier');
+const battleshipButtons = document.querySelectorAll('.battleship');
+const submarineButtons = document.querySelectorAll('.submarine');
+const destroyerButtons = document.querySelectorAll('.destroyer');
 
 let game;
 
-createButton.addEventListener('click', () => {
+// Event listener for creating the game board
+createButton.addEventListener('click', createGameBoard);
+
+// Event listener for showing ship buttons
+placeShipButton.addEventListener('click', showShipButtons);
+
+// Event listeners for ship buttons
+function createGameBoard() {
   const player1Name = getPlayerName('Enter player 1 Name');
   const player2Name = getPlayerName('Enter player 2 Name');
 
@@ -19,13 +38,19 @@ createButton.addEventListener('click', () => {
 
   console.log(game);
 
-  drawBoard(player1container, boardSize, 'player1', game); // Draw board for player 1
-  drawBoard(player2container, boardSize, 'player2', game); // Draw board for player 2
-});
+  drawBoard(player1container, boardSize, 'player1', game);
+  drawBoard(player2container, boardSize, 'player2', game);
 
-playButton.addEventListener('click', () => {
-  initializeGame();
-});
+  // Set up ship button event listeners after the game has been created
+  cruiserButtons.forEach((button) => addShipButtonEventListener(game, button));
+  carrierButtons.forEach((button) => addShipButtonEventListener(game, button));
+  battleshipButtons.forEach((button) => addShipButtonEventListener(game, button));
+  submarineButtons.forEach((button) => addShipButtonEventListener(game, button));
+  destroyerButtons.forEach((button) => addShipButtonEventListener(game, button));
+}
+
+// Event listener for starting the game
+playButton.addEventListener('click', initializeGame);
 
 function waitForPlayerInput(currentPlayer) {
   return new Promise((resolve) => {
@@ -36,7 +61,7 @@ function waitForPlayerInput(currentPlayer) {
 
       if (!playerAttack || Object.keys(playerAttack).length === 0) {
         playerTurnText.textContent = `Player ${currentPlayer.getName()}, please click on a grid/tile/coordinate.`;
-        await new Promise((innerResolve) => setTimeout(innerResolve, 6000));
+        await new Promise((innerResolve) => setTimeout(innerResolve, timeoutDuration));
         await checkForAttack(); // Check again after the timeout
       } else {
         const coordinate = playerAttack.attack;
@@ -83,23 +108,6 @@ async function initializeGame() {
   };
 
   playTurn(); // Start the first turn
-}
-function getPlayerName(promptMessage) {
-  let playerName = prompt(promptMessage);
-
-  // Validate the player name
-  while (!isValidName(playerName)) {
-    alert('Invalid name. Please enter a valid string.');
-    playerName = prompt(promptMessage);
-  }
-
-  return playerName;
-}
-
-function isValidName(name) {
-  // Add your custom validation logic here
-  // For example, ensuring the name is a non-empty string and does not contain symbols or numbers
-  return typeof name === 'string' && name.trim() !== '' && /^[a-zA-Z\s]+$/.test(name);
 }
 
 const logWinner = (winner) => {

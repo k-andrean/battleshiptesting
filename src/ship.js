@@ -1,16 +1,6 @@
-function createShip(name) {
-  const shipLengths = {
-    destroyer: 2,
-    cruiser: 3,
-    submarine: 3,
-    battleship: 4,
-    carrier: 5,
-  };
-
-  const length = shipLengths[name];
-
+function createShip(name, length) {
   if (!length) {
-    return null; // or throw new Error('Invalid ship name. Must be one of: destroyer, cruiser, submarine, battleship, carrier.');
+    return null; // or throw new Error('Invalid ship length. Must be a positive integer.');
   }
 
   return {
@@ -32,5 +22,4 @@ function createShip(name) {
     },
   };
 }
-
 module.exports = createShip;

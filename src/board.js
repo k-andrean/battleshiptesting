@@ -1,4 +1,5 @@
 const createShip = require('./ship.js');
+const { shipLengths } = require('./helper.js');
 
 function createBoard() {
   const board = {};
@@ -25,11 +26,11 @@ function createGameBoard() {
   let playerAttack = {};
 
   const ships = {
-    carrier: createShip('carrier'),
-    cruiser: createShip('cruiser'),
-    destroyer: createShip('destroyer'),
-    submarine: createShip('submarine'),
-    battleship: createShip('battleship'),
+    carrier: createShip('carrier', shipLengths.carrier),
+    cruiser: createShip('cruiser', shipLengths.cruiser),
+    destroyer: createShip('destroyer', shipLengths.destroyer),
+    submarine: createShip('submarine', shipLengths.submarine),
+    battleship: createShip('battleship', shipLengths.battleship),
   };
 
   let missedAttacks = [];
@@ -70,90 +71,10 @@ function createGameBoard() {
   };
 }
 
-function placeShip(gameBoard, shipName, shipLength, shipCoordinates) {
-  if (shipCoordinates.length !== shipLength) {
-    console.log(`Invalid ship coordinates for ${shipName}. Please provide ${shipLength} coordinates.`);
-    return;
-  }
-
-  const board = gameBoard.getBoard();
-  const shipLocation = gameBoard.getShipLocation();
-  updateBoardCoordinate(board, shipLocation, shipName, shipCoordinates);
-}
-
-function updateBoardCoordinate(board, shipLocation, shipName, shipCoordinates) {
-  for (const [row, col] of shipCoordinates) {
-    board[row][col] = shipName.charAt(0).toLowerCase(); // Using the first letter of the ship name as a code
-  }
-
-  shipLocation[shipName] = shipCoordinates;
-}
-
 function clearShipCoordinates(board, shipCoordinates) {
   for (const [row, col] of shipCoordinates) {
     board[row][col] = {}; // Clear the ship code in the board
   }
 }
 
-function receiveAttack(coordinate, gameBoard) {
-  const hitText = document.querySelector('.hit-text');
-  const [attackRow, attackCol] = coordinate;
-  const successfulAttacks = gameBoard.getSuccessfulAttacks();
-
-  if (successfulAttacks.some(([row, col]) => row === attackRow && col === attackCol)) {
-    hitText.textContent = 'This target has already been successfully attacked.';
-    return;
-  }
-
-  const shipAttackedName = checkShipAttackLocation(coordinate, gameBoard);
-
-  if (shipAttackedName) {
-    const ships = gameBoard.getShips();
-    const shipAttacked = ships[shipAttackedName];
-
-    if (!shipAttacked.isSunk()) {
-      shipAttacked.isHit();
-      successfulAttacks.push([attackRow, attackCol]);
-
-      const remainingHealth = shipAttacked.length - shipAttacked.getHitCount();
-
-      if (shipAttacked.isSunk()) {
-        hitText.textContent = `${shipAttackedName} is sunk!`;
-        // Handle any actions when a ship is sunk
-      } else {
-        hitText.textContent = `${shipAttackedName} is hit! Remaining health: ${remainingHealth}`;
-        // Handle any actions when a ship is hit but not sunk
-      }
-    }
-  } else {
-    hitText.textContent = 'Missed the target!';
-    const missedAttacks = gameBoard.getMissedAttacks();
-    missedAttacks.push(coordinate);
-    // Handle any actions when the attack misses all ships
-  }
-}
-
-function checkShipAttackLocation(coordinate, gameBoard) {
-  const [attackRow, attackCol] = coordinate;
-
-  const shipLocation = gameBoard.getShipLocation();
-
-  for (const shipName in shipLocation) {
-    const shipCoordinates = shipLocation[shipName];
-
-    for (const [row, col] of shipCoordinates) {
-      console.log(row, col, attackRow, attackCol);
-      if (row === attackRow && col === attackCol) {
-        return shipName;
-      }
-    }
-  }
-
-  return null;
-}
-
-module.exports = {
-  createGameBoard,
-  placeShip,
-  receiveAttack,
-};
+module.exports = createGameBoard;
